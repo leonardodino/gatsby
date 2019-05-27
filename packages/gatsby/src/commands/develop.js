@@ -184,11 +184,14 @@ async function startServer(program) {
     res.end()
   })
 
+  const { pathPrefix } = store.getState().config
+  const root = (program.prefixPaths && pathPrefix) || `/`
+
   // Disable directory indexing i.e. serving index.html from a directory.
   // This can lead to serving stale html files during development.
   //
   // We serve by default an empty index.html that sets up the dev environment.
-  app.use(require(`./develop-static`)(`public`, { index: false }))
+  app.use(root, require(`./develop-static`)(`public`, { index: false }))
 
   app.use(
     require(`webpack-dev-middleware`)(compiler, {
